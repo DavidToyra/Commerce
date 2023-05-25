@@ -1,0 +1,23 @@
+body {
+    padding: 10px;
+}
+
+ul {
+    list-style-type: none;
+  }
+
+img {
+    float:left;
+    max-width: 250px;
+    max-height: 250px;
+
+}
+
+.listing-info{
+    padding:50px;
+    float:left
+}
+
+.listing-div{
+    border: 1px solid black;
+}
