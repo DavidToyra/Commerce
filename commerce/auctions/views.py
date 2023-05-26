@@ -91,8 +91,13 @@ def listing(request,title):
     if request.method == "POST":
         if 'watchlist' in request.POST:
             #Add to watchlist
-            bid, created = Bids.objects.get(user=request.user, listing=title)
+            listID = Listings.objects.get(title=title)
+            bid = Bids.objects.get_or_create(user=request.user, listing=listID, watchlist=True, currentBid=0)
+            return HttpResponseRedirect(reverse("listing",{
+                "message": "Added to watchlist"
+            }))
             bid.currentBid = request.POST["bid"]
             listing = Listings.objects.get(title=title)
+
             listing.startbid = request.POST["bid"]
         

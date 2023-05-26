@@ -14,6 +14,8 @@ class Listings(models.Model):
 class Bids(models.Model):
     currentBid = models.IntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    #Change from key to string?
     listing = models.ForeignKey(Listings, on_delete=models.CASCADE)
     watchlist = models.BooleanField()
 

@@ -2,6 +2,9 @@
 
 {% block body %}
     <h2>{{ listing.title }}</h2>
+    {% if message %}
+        <div>{{ message }}</div>
+    {% endif %}
 
  
     <ul>
@@ -13,6 +16,7 @@
         
         {% if user.is_authenticated %}
         <form action="{% url 'listing' listing.title %}" method="POST">
+            {% csrf_token %}
             <li><button type="submit" name="watchlist">Add to watchlist</button></li>
             <li><input type="text" name="bid" placeholder="add a bid"></li>
             <li><button type="submit" name="close">Close auction</button></li>
