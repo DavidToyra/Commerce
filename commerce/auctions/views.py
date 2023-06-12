@@ -89,15 +89,24 @@ def listing(request,title):
             "listing": listing
         })
     if request.method == "POST":
+        listID = Listings.objects.get(title=title)
         if 'watchlist' in request.POST:
             #Add to watchlist
-            listID = Listings.objects.get(title=title)
             bid = Bids.objects.get_or_create(user=request.user, listing=listID, watchlist=True, currentBid=0)
-            return HttpResponseRedirect(reverse("listing",{
-                "message": "Added to watchlist"
-            }))
-            bid.currentBid = request.POST["bid"]
-            listing = Listings.objects.get(title=title)
+            watch=True
+            return render(request, "auctions/listing.html",{
+                "listing": listID, "message": "Added to watchlist", "watchlist": watch
+            })
+        elif 'unwatch' in request.POST:
+            bid = Bids.objects.get(user=request.user, listing=listID)
+            bid.watchlist=False
+            bid.save()
+            watch=False
+            return render(request, "auctions/listing.html",{
+                "listing": listID, "message": "Added to watchlist", "watchlist": watch
+            })
+            #bid.currentBid = request.POST["bid"]
+            #listing = Listings.objects.get(title=title)
 
-            listing.startbid = request.POST["bid"]
+            #listing.startbid = request.POST["bid"]
         
