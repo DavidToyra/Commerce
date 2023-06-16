@@ -10,6 +10,7 @@ class Listings(models.Model):
     description = models.CharField(max_length=256)
     startbid = models.IntegerField()
     img = models.URLField(max_length=200)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class Bids(models.Model):
     currentBid = models.IntegerField()

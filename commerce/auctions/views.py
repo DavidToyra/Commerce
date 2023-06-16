@@ -77,7 +77,7 @@ def create(request):
         
         print(title, description,startBid)
 
-        listing = Listings(title=title, description = description, startbid=startBid, img=img)
+        listing = Listings(title=title, description = description, startbid=startBid, img=img,owner=request.user)
         listing.save()
        
         return HttpResponseRedirect(reverse("index"))
@@ -85,28 +85,56 @@ def create(request):
 def listing(request,title):
     if request.method == "GET":
         listing = Listings.objects.get(title=title)
-        return render(request, "auctions/listing.html",{
+
+        # Check if a bid model exists for this user, if not display default values on listing page
+        try:
+            bid = Bids.objects.get(user=request.user, listing=listing)
+        except Bids.DoesNotExist:
+
+            return render(request, "auctions/listing.html",{
             "listing": listing
+        })
+           
+        return render(request, "auctions/listing.html",{
+            "listing": listing, "bids":bid
         })
     if request.method == "POST":
         listID = Listings.objects.get(title=title)
         if 'watchlist' in request.POST:
             #Add to watchlist
+            print("add to watchlist")
+            #TODO: FIX SO IT UPDATE WATCHLIST INSTEAD OF CREATING A NEW BID MODEL
+            try:
+                bid = Bids.objects.get(user=request.user, listing=listID)
+            except Bids.DoesNotExist:
+                
             bid = Bids.objects.get_or_create(user=request.user, listing=listID, watchlist=True, currentBid=0)
-            watch=True
             return render(request, "auctions/listing.html",{
-                "listing": listID, "message": "Added to watchlist", "watchlist": watch
+                "listing": listID, "message": "Added to watchlist", "bids": bid
             })
         elif 'unwatch' in request.POST:
+            #Remove from watch list
+            print("remove from watchlist")
             bid = Bids.objects.get(user=request.user, listing=listID)
             bid.watchlist=False
             bid.save()
-            watch=False
             return render(request, "auctions/listing.html",{
-                "listing": listID, "message": "Added to watchlist", "watchlist": watch
+                "listing": listID, "message": "Removed from watchlist", "bids": bid
             })
-            #bid.currentBid = request.POST["bid"]
-            #listing = Listings.objects.get(title=title)
+        elif 'bid' in request.POST:
+            #Add bid on existing auction
+            bid = request.POST["bid"]
+            try:
+                bid = Bids.objects.get(user=request.use, listing=listID)
+                if request.POST["bid"] > bid.currentBid and request.POST["bid"] >= listing.startbid:
+                    bid.currentBid = request.POST["bid"]
+                    bid.save()
+            except Bids.DoesNotExist:
+                if request.POST["bid"] >= listing.startbid:
+                    bid = Bids.objects.get_or_create(user=request.use, listing=listID,
+                                                    watchList=False, currentBid=request.POST["bid"])
+        elif 'comment' in request.POST:
+            comment = Comments(comment=comment, user=request.user, listing=listID)
+            comment.save()
 
-            #listing.startbid = request.POST["bid"]
         
