@@ -14,10 +14,16 @@ img {
 }
 
 .listing-info{
-    padding:50px;
-    float:left
+    /*padding:50px;*/
+    float:left;
 }
 
 .listing-div{
     border: 1px solid black;
+    min-width: 250px;
+    min-height: 250px;
+}
+
+.highlight{
+    background-color: aquamarine;
 }

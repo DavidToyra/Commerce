@@ -1,9 +1,23 @@
 {% extends "auctions/layout.html" %}
 
+
 {% block body %}
     <h2>Active Listings</h2>
 
- 
+    <form action="/" method="POST">
+        {% csrf_token %}
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Categories
+            </button>
+            <ul class="dropdown-menu">
+            {% for category in categories %}
+            <li><button class="dropdown-item" name="category" value="{{ category.category }}" type="submit">{{ category.category }}</button></li>
+            {% endfor %}
+            </ul>
+        </div>
+    </form>
+    
     <ul>
         {% for listing in listings %}
         <div class="listing-div">
@@ -11,12 +25,11 @@
             <div class="listing-info">
                 <li><b>{{ listing.title }}</b></li>
                 <li>{{ listing.description }}</li>
-                <li><b>Price: {{ listing.startbid }}</b></li>
+                <li><b>Price: {{ listing.price }}</b></li>
             </div>
         </div>
+
         {% endfor %}
 
     </ul>
-
-   
 {% endblock %}

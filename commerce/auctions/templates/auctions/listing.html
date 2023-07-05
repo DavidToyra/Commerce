@@ -12,31 +12,45 @@
     <ul>
         <li><b>{{ listing.title }}</b></li>
         <li>{{ listing.description }}</li>
-        <li><b>Price: {{ listing.startbid }}</b></li>
+        <li><b>Price: {{ listing.price }}</b></li>
         <li><img src="{{ listing.img }}"></li>
-        {% for comment in comments %}
-        <li>{{comment}}</li>
-        {% endfor %}
+      
 
         
         {% if user.is_authenticated %}
-        <form action="{% url 'listing' listing.title %}" method="POST">
-            {% csrf_token %}
-            {% if bids.watchlist %}
-            <li><button type="submit" name="unwatch">Remove from watchlist</button></li>
-            {% else %}
-            <li><button type="submit" name="watchlist">Watch</button></li>
-            {% endif %} 
-            <li><input type="text" name="bid" placeholder="add a bid"></li>
-            <li><input type="text" name="comment" placeholder="Add a comment"></li>
-        </form>
-        <form action="{% url 'index' %}" method="POST">
-            {% if listing.owner.user == user %}
-            <li><button type="submit" name="close">Close auction</button></li>
+            {% if listing.active %}
+            <form action="{% url 'listing' listing.title %}" method="POST">
+                {% csrf_token %}
+                {% if bids.watchlist %}
+                <li><button type="submit" name="unwatch">Remove from watchlist</button></li>
+                {% else %}
+                <li><button type="submit" name="watchlist">Watch</button></li>
+                {% endif %} 
+                <li><input type="text" name="bid" placeholder="add a bid"> <input type="submit" name=bidbutton>Bid</li>
+                
+                <li><input type="text" name="comment" placeholder="Add a comment"><input type="submit" name=commentbutton>Submit</li>
+                {% if listing.owner == user %}
+                <li><button type="submit" name="close">Close auction</button></li>
+                {% endif %}
+            </form>
+            {% elif listing.price == bids.currentBid%}
+                <p>WON</p>
+            <div class="alert alert-primary" role="alert">
+                You won this item!
+            </div>
+            {% elif not lsiting.active %}
+                <div class="alert alert-warning" role="alert">
+                    Listing is closed!
+                </div>
+                <p>CLOSED</p>
             {% endif %}
-        </form>
+
+    
         {% endif %}
     </ul>
+    {% for comment in comments %}
+    <li>{{comment.user}}: {{comment.comment}}</li>
+    {% endfor %}
 
 
    
